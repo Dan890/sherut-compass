@@ -1,0 +1,159 @@
+<title>מצפן השירות</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@400;500;600&display=swap">
+<style>
+/* Layout: עמודה אחת צרה, שאלון בשלבים עם סרגל פרקים, ותוצאות כרשימת כרטיסי תפקיד מדורגים */
+:root {
+  --bg: #f3f6f8;
+  --surface: #ffffff;
+  --ink: #18263a;
+  --muted: #5b6878;
+  --line: #d9e1e8;
+  --accent: #0e6a7e;
+  --accent-soft: #dcefF2;
+  --sun: #d99a1e;
+  --good: #2f7d4f;
+  --good-soft: #e3f2e8;
+  --warn: #9a6a00;
+  --warn-soft: #fbf0d6;
+  --bad: #a43d3d;
+  --bad-soft: #f7e3e3;
+  --font-display: "Secular One", "Rubik", "Arial Hebrew", sans-serif;
+  --font-body: "Rubik", "Arial Hebrew", "Segoe UI", sans-serif;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1722; --surface: #172231; --ink: #e6edf3; --muted: #9aa8b8; --line: #2a3a4d;
+    --accent: #5cc3d6; --accent-soft: #163a45; --sun: #f0b84a;
+    --good: #7fcf9b; --good-soft: #17352a; --warn: #f0c060; --warn-soft: #3a2f14; --bad: #f09a9a; --bad-soft: #3d1f22;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1722; --surface: #172231; --ink: #e6edf3; --muted: #9aa8b8; --line: #2a3a4d;
+  --accent: #5cc3d6; --accent-soft: #163a45; --sun: #f0b84a;
+  --good: #7fcf9b; --good-soft: #17352a; --warn: #f0c060; --warn-soft: #3a2f14; --bad: #f09a9a; --bad-soft: #3d1f22;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 64px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; line-height: 1.25; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.15rem; }
+p { margin: 0; }
+a { color: var(--accent); }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+.muted { color: var(--muted); }
+.small { font-size: .875rem; }
+.eyebrow { font-size: .8rem; letter-spacing: .06em; color: var(--accent); font-weight: 600; }
+
+/* כותרת */
+.masthead { display: flex; flex-direction: column; gap: 12px; }
+.masthead p { max-width: 62ch; color: var(--muted); }
+.compass { display: inline-flex; align-items: center; gap: 10px; }
+.compass svg { width: 34px; height: 34px; flex: none; }
+
+/* כפתורים */
+.btn { border: 0; border-radius: 999px; padding: 12px 22px; background: var(--accent); color: var(--surface); font-weight: 600; }
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+.btn.link { background: none; color: var(--muted); padding: 8px 4px; text-decoration: underline; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+/* מסך פתיחה */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+.steps div { display: flex; flex-direction: column; gap: 4px; }
+.steps b { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; }
+
+/* סרגל פרקים */
+.rail { display: flex; gap: 4px; }
+.rail span { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
+.rail span.done { background: var(--accent); }
+.rail span.now { background: var(--sun); }
+.chapter-head { display: flex; flex-direction: column; gap: 6px; }
+
+/* שאלות */
+.q { display: flex; flex-direction: column; gap: 10px; padding-block: 16px; border-top: 1px solid var(--line); }
+.q:first-of-type { border-top: 0; }
+.q-text { font-weight: 600; }
+.hard-tag { font-size: .72rem; font-weight: 600; color: var(--warn); background: var(--warn-soft); border-radius: 999px; padding: 1px 8px; margin-inline-start: 6px; vertical-align: middle; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 8px 14px; text-align: start; }
+.opt:hover { border-color: var(--accent); }
+.opt[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.grid3 { display: flex; flex-direction: column; gap: 2px; }
+.g-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.g-row:last-child { border-bottom: 0; }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); color: var(--muted); padding: 6px 12px; font-size: .875rem; }
+.seg button + button { border-inline-start: 1px solid var(--line); }
+.seg button[aria-pressed="true"][data-v="0"] { background: var(--bad-soft); color: var(--bad); font-weight: 600; }
+.seg button[aria-pressed="true"][data-v="1"] { background: var(--warn-soft); color: var(--warn); font-weight: 600; }
+.seg button[aria-pressed="true"][data-v="2"] { background: var(--good-soft); color: var(--good); font-weight: 600; }
+.role-pick { max-height: 320px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+.role-pick label { display: flex; gap: 8px; align-items: flex-start; padding: 4px; }
+.help { font-size: .875rem; color: var(--muted); }
+.nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+/* תוצאות */
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.bars { display: flex; flex-direction: column; gap: 8px; }
+.bar { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 2.5rem; gap: 10px; align-items: center; font-size: .9rem; }
+.bar .track { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--accent); border-radius: 5px; }
+.bar .num { font-variant-numeric: tabular-nums; text-align: end; color: var(--muted); }
+.notes { display: flex; flex-direction: column; gap: 8px; margin: 0; padding-inline-start: 18px; }
+.timeline { display: flex; flex-direction: column; gap: 10px; }
+.tl { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 12px; }
+.tl .date { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent); }
+.cards { display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.card-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; }
+.score { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; font-variant-numeric: tabular-nums; border: 3px solid var(--accent); color: var(--accent); font-size: 1.05rem; }
+.score.alt { border-color: var(--sun); color: var(--warn); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font-size: .75rem; border-radius: 999px; padding: 2px 9px; background: var(--accent-soft); color: var(--accent); }
+.chip.good { background: var(--good-soft); color: var(--good); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.list { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 2px; font-size: .925rem; }
+.list.pros li::marker { color: var(--good); }
+.list.checks li::marker { color: var(--warn); }
+.list.cons li::marker { color: var(--bad); }
+details summary { cursor: pointer; color: var(--accent); font-size: .9rem; }
+details[open] summary { margin-bottom: 8px; }
+.detail { display: flex; flex-direction: column; gap: 8px; font-size: .925rem; }
+.place { border-top: 1px dashed var(--line); padding-top: 8px; display: flex; flex-direction: column; gap: 2px; font-size: .9rem; }
+.section-head { display: flex; flex-direction: column; gap: 4px; }
+.banner { background: var(--accent-soft); border-radius: var(--radius); padding: 12px 16px; font-size: .9rem; }
+.footer { font-size: .8rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 480px) {
+  .bar { grid-template-columns: 7rem minmax(0, 1fr) 2.2rem; }
+  .tl { grid-template-columns: 1fr; gap: 2px; }
+  .g-row { grid-template-columns: 1fr; gap: 4px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fill { transition: width .5s ease; }
+}
+</style>
+
+<div class="wrap" dir="rtl" lang="he" id="app"></div>
+
+<script src="data/vocab.js"></script>
+<script src="data/roles.js"></script>
+<script src="data/placements.js"></script>
+<script src="data/questions.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
